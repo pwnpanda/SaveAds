@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SaveAds - Database Viewer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .entry {
+            background: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .price-history {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+        .price-change {
+            margin: 5px 0;
+            padding: 5px;
+        }
+        .price-increase {
+            color: #c62828;
+        }
+        .price-decrease {
+            color: #2e7d32;
+        }
+        .controls {
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 8px 16px;
+            margin-right: 10px;
+            border: none;
+            border-radius: 4px;
+            background: #2196F3;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #1976D2;
+        }
+        .entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .favorite-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #ccc;
+            padding: 5px 10px;
+            transition: color 0.2s;
+        }
+
+        .favorite-btn:hover {
+            color: #ffd700;
+        }
+
+        .favorite-btn.active {
+            color: #ffd700;
+        }
+        
+        .button-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .delete-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #dc3545;
+            padding: 5px 10px;
+            transition: color 0.2s;
+        }
+
+        .delete-btn:hover {
+            color: #bd2130;
+        }
+ 
+        textarea {
+            font-family: Arial, sans-serif;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        textarea:focus {
+            border-color: #2196F3;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 500px;
+        }
+
+        .import-options {
+            margin: 20px 0;
+        }
+
+        .import-options label {
+            display: block;
+            margin: 10px 0;
+        }
+
+        .modal-buttons {
+            margin-top: 20px;
+            text-align: right;
+        }
+
+        .modal-buttons button {
+            margin-left: 10px;
+        }
+
+        .secondary-button {
+            background: #757575;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>SaveAds Database Viewer</h1>
+        <div class="controls">
+            <!-- Remove the onclick attributes -->
+            <button id="refreshButton">Refresh Data</button>
+            <button id="exportButton">Export Data</button>
+            <button id="importButton" class="secondary-button">Import Data</button>
+            <button id="toggleFavorites">Show Favorites Only</button>
+        </div>
+        <div id="entries"></div>
+    </div>
+
+    <div id="importModal" class="modal">
+        <div class="modal-content">
+            <h2>Import Data</h2>
+            <p>Choose a JSON file to import:</p>
+            <input type="file" id="importFile" accept=".json">
+            <div class="import-options">
+                <label>
+                    <input type="radio" name="importMode" value="merge" checked>
+                    Add to existing data
+                </label>
+                <label>
+                    <input type="radio" name="importMode" value="overwrite">
+                    Overwrite existing data
+                </label>
+            </div>
+            <div class="modal-buttons">
+                <button id="confirmImport">Import</button>
+                <button id="cancelImport">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="database.js"></script>
+    <script src="view-data.js"></script>
+</body>
+</html>

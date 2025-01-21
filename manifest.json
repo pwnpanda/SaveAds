@@ -1,0 +1,57 @@
+{
+    "manifest_version": 2,
+    "name": "SaveAds",
+    "version": "1.4",
+  
+    "description": "Save adds for Finn and Hjem",
+  
+    "icons": {
+      "48": "save.png",
+      "96": "save.png"
+    },
+    
+    "permissions": [
+      "activeTab",
+      "tabs",
+      "webNavigation",
+      "storage",
+      "unlimitedStorage"
+    ],
+
+    "content_scripts": [
+      {
+        "matches": [
+            "*://*.finn.no/realestate/homes/*",
+            "*://*.finn.no/mobility/item/*",
+            "https://*.hjem.no/*"
+            ],
+        "js": [
+          "priceHistory.js",
+          "content.js"
+        ]
+      }
+    ],
+
+    "background": {
+      "page": "background.html"
+    },
+
+    "browser_action": {
+        "default_icon": "save.png",
+        "default_title": "Click to toggle SaveAds"
+    },
+
+    "web_accessible_resources": [
+      "view-data.html"
+    ],
+
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "saveads@robinlunde.com"
+        },
+        "update_url": "https://robinlunde.com/other/SaveAds"
+    }
+
+
+  }
+  
