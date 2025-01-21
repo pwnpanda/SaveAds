@@ -175,7 +175,7 @@ const Database = class {
                     const newRecord = {
                         ...data,
                         note: data.note || '',
-                        priceHistory: [],
+                        priceHistory: data.priceHistory || [], // Preserve imported price history
                         timestamp: preserveTimestamps ? data.timestamp : currentTime,
                         lastChecked: preserveTimestamps ? data.lastChecked : currentTime
                     };

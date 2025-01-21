@@ -372,6 +372,8 @@ async function importData(importedData, importMode) {
 
     // Process each entry
     for (const entry of importedData) {
+        let finalEntry = { ...entry };
+
         if (importMode === 'merge') {
             // Check if entry exists
             const existingEntry = await browser.runtime.sendMessage({
@@ -379,40 +381,51 @@ async function importData(importedData, importMode) {
                 address: entry.address
             });
             
-            if (existingEntry) {
-                // Merge price histories if they exist
-                if (existingEntry.priceHistory && entry.priceHistory) {
-                    const combinedHistory = [...existingEntry.priceHistory];
-                    
-                    // Add new price history entries that don't exist
-                    entry.priceHistory.forEach(historyItem => {
-                        const exists = combinedHistory.some(
-                            existing => existing.timestamp === historyItem.timestamp
-                        );
-                        if (!exists) {
-                            combinedHistory.push(historyItem);
-                        }
-                    });
-                    
-                    // Sort by timestamp
-                    combinedHistory.sort((a, b) => 
-                        new Date(a.timestamp) - new Date(b.timestamp)
-                    );
-                    
-                    entry.priceHistory = combinedHistory;
+            if (existingEntry && existingEntry.data) {  // Add check for existingEntry.data
+                // Create a combined price history array
+                const combinedHistory = [];
+                
+                // Add existing price history
+                if (existingEntry.data.priceHistory) {
+                    combinedHistory.push(...existingEntry.data.priceHistory);
                 }
                 
+                // Add new price history
+                if (entry.priceHistory) {
+                    combinedHistory.push(...entry.priceHistory);
+                }
+                
+                // Add current prices as history entries if they don't match
+                if (existingEntry.data.price !== entry.price) {
+                    combinedHistory.push({
+                        price: existingEntry.data.price,
+                        timestamp: existingEntry.data.timestamp
+                    });
+                }
+                
+                // Remove duplicates based on timestamp
+                const uniqueHistory = Array.from(new Map(
+                    combinedHistory.map(item => [item.timestamp, item])
+                ).values());
+                
+                // Sort by timestamp
+                uniqueHistory.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+                
+                finalEntry.priceHistory = uniqueHistory;
+                
                 // Preserve existing note if new entry doesn't have one
-                if (!entry.note && existingEntry.note) {
-                    entry.note = existingEntry.note;
+                if (!finalEntry.note && existingEntry.data.note) {
+                    finalEntry.note = existingEntry.data.note;
                 }
             }
         }
+        console.log(entry);
+        console.warn(finalEntry);
         
         await browser.runtime.sendMessage({
             action: "saveEntry",
             data: {
-                ...entry,
+                ...finalEntry,
                 preserveTimestamps: true
             }
         });
