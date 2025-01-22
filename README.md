@@ -2,5 +2,5 @@
 Save finn ad info for later
 
 ## TODO
-- [ ] Create import and export function for database
+- [ ] Fix import when not overwriting DB -> Gets NAN for all price history!
 - [ ] Sync database using firefox account
